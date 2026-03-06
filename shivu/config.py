@@ -6,9 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-class Config(object):
-    LOGGER = True
-
+class Development:
     # Get this value from my.telegram.org/apps
     OWNER_ID = "5158013355"
     sudo_users = "5158013355"
@@ -24,12 +22,6 @@ class Config(object):
     api_hash = "50c4947b6fe96901599c8b18b09f3e13"
 
     
-class Production(Config):
-    LOGGER = True
-
-
-class Development(Config):
-    LOGGER = True
 
 # User Roles
     GRADE4 = []
