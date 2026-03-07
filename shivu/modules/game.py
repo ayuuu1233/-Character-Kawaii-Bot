@@ -13,8 +13,8 @@ from shivu import user_collection, collection, application
 active_scramble_games = {}
 scramble_leaderboard = {}
 
-ALLOWED_GROUP_ID = -1002104939708
-SUPPORT_GROUP_URL = "https://t.me/dynamic_gangs"
+ALLOWED_GROUP_ID = -1001945969614
+SUPPORT_GROUP_URL = "https://t.me/upper_moon_chat"
 
 
 # ---------------- FETCH CHARACTER ---------------- #
