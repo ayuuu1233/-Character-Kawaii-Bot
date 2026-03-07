@@ -20,7 +20,8 @@ class Development:
     CHARA_CHANNEL_ID = "-1002596866659"
     api_id = 21621475
     api_hash = "50c4947b6fe96901599c8b18b09f3e13"
-
+    JOINLOGS = -1001945969614
+    LEAVELOGS = -1001945969614
     
 
 # User Roles
