@@ -286,14 +286,25 @@ application.add_handler(
 application.add_handler(
     CommandHandler("start", start, block=False)
 )
-application.add_handler(start_handler)
 
 async def main():
-    await application.initialize()
+    # Initialize application
+    if not application.updater: 
+        await application.initialize()
+    
     await application.start()
+    
+    # Sudo users ko notify karein
     asyncio.create_task(notify_sudo_users(application))
-    await application.run_polling()
-    await application.idle()
+    
+    # Polling start karein
+    await application.updater.start_polling()
+    print("Bot is running...")
+    
+    # Bot ko idle mode mein rakhein
+    # Note: Agar aap manually main() chala rahe hain toh application.run_polling() 
+    # use karna zyada safe hota hai standard setups mein.
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    # Standard way to run the application
+    application.run_polling() 
