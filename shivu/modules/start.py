@@ -2,7 +2,7 @@ import asyncio
 from html import escape
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CallbackContext, CommandHandler, CallbackQueryHandler
-from shivu import db
+from shivu import db, OWNER_ID 
 from shivu import application, GROUP_ID, user_collection
 collection = db['total_pm_users']
 # Define your sudo users' IDs here
@@ -68,7 +68,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     if args and args[0].startswith('r_'):
         referring_user_id = int(args[0][2:])
 
-    user_data = await collection.find_one({"id": user_id})
+    user_data = await user_collection.find_one({"id": user_id})
 
     if user_data is None:
         new_user = {
@@ -78,12 +78,12 @@ async def start(update: Update, context: CallbackContext) -> None:
             "tokens": 500,
             "characters": []
         }
-        await collection.insert_one(new_user)
+        await user_collection.insert_one(new_user)
 
         if referring_user_id:
-            referring_user_data = await collection.find_one({"id": referring_user_id})
+            referring_user_data = await user_collection.find_one({"id": referring_user_id})
             if referring_user_data:
-                await collection.update_one({"id": referring_user_id}, {"$inc": {"tokens": 1000}})
+                await user_collection.update_one({"id": referring_user_id}, {"$inc": {"tokens": 1000}})
                 referrer_message = f"{first_name} used your referral link and you've received 1000 tokens!"
                 try:
                     await context.bot.send_message(chat_id=referring_user_id, text=referrer_message)
@@ -151,7 +151,7 @@ async def start(update: Update, context: CallbackContext) -> None:
         keyboard = [
             [InlineKeyboardButton("✜ ᴧᴅᴅ ϻє ɪη ʏσυʀ ɢʀσυᴘ ✜", url=f'https://t.me/{context.bot.username}?startgroup=new')],
             [InlineKeyboardButton("˹ sυᴘᴘσʀᴛ ˼", url=f'https://t.me/{SUPPORT_GROUP_ID.lstrip("@")}'),
-             InlineKeyboardButton("˹ ᴜᴘᴅᴧᴛєs ˼", url='https://t.me/Seizer_updates')],
+             InlineKeyboardButton("˹ ᴜᴘᴅᴧᴛєs ˼", url='https://t.me/upper_moon_chat')],
             [InlineKeyboardButton("✧ʜᴇʟᴘ✧", callback_data='help')],
       ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -279,32 +279,16 @@ Use the buttons below to navigate."""
             parse_mode='markdown'
         )
 
-application.add_handler(
-    CallbackQueryHandler(button, pattern='^help$|^basic$|^game$|^back$', block=False)
-)
-
-application.add_handler(
-    CommandHandler("start", start, block=False)
-)
+application.add_handler(CallbackQueryHandler(button, pattern='^help$|^basic$|^game$|^back$', block=False))
+start_handler = CommandHandler('start', start, block=False)
+application.add_handler(start_handler)
 
 async def main():
-    # Initialize application
-    if not application.updater: 
-        await application.initialize()
-    
+    await application.initialize()
     await application.start()
-    
-    # Sudo users ko notify karein
     asyncio.create_task(notify_sudo_users(application))
-    
-    # Polling start karein
     await application.updater.start_polling()
-    print("Bot is running...")
-    
-    # Bot ko idle mode mein rakhein
-    # Note: Agar aap manually main() chala rahe hain toh application.run_polling() 
-    # use karna zyada safe hota hai standard setups mein.
+    await application.idle()
 
 if __name__ == '__main__':
-    # Standard way to run the application
-    application.run_polling() 
+    asyncio.run(main())
