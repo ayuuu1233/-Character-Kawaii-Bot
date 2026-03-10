@@ -2,6 +2,7 @@ import asyncio
 from html import escape
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CallbackContext, CommandHandler, CallbackQueryHandler
+from shivu import db
 from shivu import application, GROUP_ID, user_collection
 collection = db['total_pm_users']
 # Define your sudo users' IDs here
